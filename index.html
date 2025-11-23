@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fakhrii TikTok Downloader</title>
+<style>
+body {margin:0;padding:0;background:#0f172a;font-family:"Poppins",sans-serif;color:white;}
+.container{max-width:650px;margin:auto;padding:20px;margin-top:50px;background:#1e293b;border-radius:18px;box-shadow:0 0 25px rgba(255,255,255,0.07);}
+h1{text-align:center;font-size:32px;font-weight:700;margin-bottom:10px;color:#38bdf8;}
+.inputBox input{width:100%;padding:15px;border-radius:12px;border:none;font-size:16px;margin-top:10px;}
+button{width:100%;margin-top:15px;padding:15px;background:#38bdf8;border:none;font-size:18px;border-radius:12px;font-weight:600;cursor:pointer;transition:0.3s;}
+button:hover{background:#22c55e;transform:scale(1.05);}
+video,img{width:100%;border-radius:12px;margin-top:20px;}
+.footer{text-align:center;margin-top:25px;opacity:0.7;font-size:14px;}
+.whatsapp{margin-top:20px;display:block;padding:12px;background:#25d366;color:white;text-align:center;border-radius:12px;font-size:18px;text-decoration:none;font-weight:bold;transition:0.3s;}
+.whatsapp:hover{background:#1ebe57;transform:scale(1.05);}
+.detail-box{padding:12px;background:rgba(15,26,46,0.7);backdrop-filter:blur(10px);border-radius:12px;margin-top:12px;line-height:1.5;transition:0.3s;}
+.detail-box:hover{background:rgba(15,26,46,0.9);}
+.author-box{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(15,26,46,0.7);backdrop-filter:blur(10px);border-radius:12px;margin-top:12px;transition:0.3s;}
+.author-box img{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+.author-box:hover{background:rgba(15,26,46,0.9);}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Fakhrii TikTok Downloader</h1>
+    <p style="text-align:center;opacity:0.8">Paste your TikTok link below</p>
+    <div class="inputBox">
+        <input id="tiktok" placeholder="https://www.tiktok.com/...">
+        <button onclick="getData()">Fetch Video</button>
+    </div>
+
+    <div id="result"></div>
+
+    <a class="whatsapp" href="https://wa.me/923220446657" target="_blank">Chat on WhatsApp</a>
+
+    <div class="footer">Art By Th'w Fakhrii</div>
+</div>
+
+<script>
+async function getData() {
+    let link = document.getElementById("tiktok").value;
+    let result = document.getElementById("result");
+    result.innerHTML = "<p>Loading...</p>";
+
+    try {
+        let api = "https://ttinfo.rifahadking.workers.dev/?url=" + encodeURIComponent(link);
+        let res = await fetch(api);
+        let json = await res.json();
+        if(!json.data) throw new Error("Invalid API response");
+        let d = json.data;
+
+        let html = `
+            <div class="detail-box"><b>🎬 Title:</b><br>${d.title}</div>
+            <div class="detail-box"><b>👁️ Views:</b> ${d.play_count}</div>
+            <div class="detail-box"><b>❤️ Likes:</b> ${d.digg_count}</div>
+            <div class="detail-box"><b>💬 Comments:</b> ${d.comment_count}</div>
+            <div class="detail-box"><b>🔗 Shares:</b> ${d.share_count}</div>
+            <div class="author-box">
+                <img src="${d.author.avatar}" alt="Author">
+                <div><b>👤 Author:</b><br>${d.author.nickname}</div>
+            </div>
+            <img src="${d.cover}" alt="Video Cover">
+            <video controls src="${d.play}"></video>
+            <a href="${d.play}" download>
+                <button style="background:#10b981;margin-top:15px;">Download Video</button>
+            </a>
+            ${d.music ? `<a href="${d.music}" download>
+                <button style="background:#f59e0b;margin-top:10px;">Download Audio</button>
+            </a>` : ''}
+        `;
+
+        result.innerHTML = html;
+
+    } catch(e) {
+        result.innerHTML = `<p>Error: ${e.message}</p>`;
+    }
+}
+</script>
+</body>
+</html>
